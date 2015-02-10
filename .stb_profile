@@ -1,0 +1,20 @@
+#! /bin/bash
+
+export ID="MyLocal-STB"
+export OEM=`getChildItems oem | grep oem.name | awk -F= '{print $2}'`
+export MODEL=`getChildItems oem | grep oem.device.model.name | awk -F= '{print $2}'`
+export VARIANT=`getChildItems oem | grep oem.device.model.variant | awk -F= '{print $2}'`
+export VERSION=`getChildItems oem | grep oem.activatedsoftware.coredevicesoftware.version | awk -F= '{print $2}'`
+export DUID=`getChildItems oem.device.duid | grep oem.device.duid | awk -F= '{print $2}'`
+export STB=$ID-$MODEL-$VARIANT-$VERSION
+export PROVIDER=`getChildItems oem | grep oem.rc.model.operator | awk -F= '{print $2}'`
+ECO=`getChildItems platform | grep platform.powermanagement.ecomode= | awk -F= '{print $2}'`
+ECOMODE=high
+
+if [ "$ECO" == 'false' ]; then
+    ECOMODE=low
+fi
+export ECOMODE
+    
+export STB=$ID-$MODEL-$VARIANT-$VERSION
+    
