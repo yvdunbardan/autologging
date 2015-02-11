@@ -22,11 +22,15 @@ LOGFILE=/mnt/hd1/Logs/stb_dbus_log_${NOW}.txt
 MEMLOGFILE=/mnt/hd1/Logs/stb_vmstat_log_${NOW}.txt
 
 vmstat -S K -n 1800 > ${MEMLOGFILE} &
-
 dbus-monitor >> ${LOGFILE} &
 
 sleep 10
 python -u /mnt/hd1/DVRProfiler.py >> ${DVRLOGFILE} &
 chmod 777 ${DVRLOGFILE}
 chmod 777 ${LOGFILE}
+
+# Start TCP Dump logging
+/mnt/hd1/tcpdump ip proto 2 -w ./Logs/igmp-$NOW.pcap &
+python -u /mnt/hd1/udp_capture.py 900 20 &
+
 
