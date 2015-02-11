@@ -5,9 +5,9 @@ import time, threading, sys, subprocess, os
 # ------------------------------------------------------------------
 def PrintUsage():
     print "Usage: udp_capture.py [CaptureInterval] [CaptureDuration]"
-    print " where [CaptureInterval] is the intervals where UDP traffic is recorded."
+    print " where [CaptureInterval] is the intervals in minutes where UDP traffic is recorded."
     print " and   [CaptureDuration] is the length of time (in seconds) that the"
-    print " traffic is recorded."
+    print " traffic is recorded. This is split evenly over the [CaptureInterval]"
 
 # ------------------------------------------------------------------
 # Start capturing udp traffic
@@ -32,7 +32,7 @@ def StopUDPCapture( tcpdump_process ):
 # Start and Stop UDP Capture
 # ------------------------------------------------------------------
 def CaptureUDPTraffic(recording_duration):
-    udp_filename = time.strftime("%y-%b-%d_%H-%M" ) + ".pcap"
+    udp_filename = "udp-" + time.strftime("%Y-%m-%d_%H-%M" ) + ".pcap"
     tcpdump_process = StartUDPCapture( os.path.join( "/mnt/hd1/Logs", udp_filename ))
     time.sleep( recording_duration )
     StopUDPCapture( tcpdump_process )
@@ -43,18 +43,20 @@ def CaptureUDPTraffic(recording_duration):
 # Get the command line arguments
 # Enter an infinite loop, triggering to CaptureUDPTraffic at interval specified by the user
 # ------------------------------------------------------------------
-print (time.ctime())
-
 try:
     # Get command line arguments
     interval_in_minutes = int(sys.argv[1])      # Interval to start capturing in minutes
     recording_duration = int(sys.argv[2]) 	# Capture Traffic for x seconds
 
-    # Loop
     while(1):
         if ( (int( time.time() ) + ( recording_duration/2 )) % (interval_in_minutes*60) == 0):
             CaptureUDPTraffic(recording_duration)
-except:
+
+except (IndexError, ValueError):
     PrintUsage()
-    sys.exit(1)
     
+except Exception as e:
+    print type(e)
+    print e.args
+    print e
+    sys.exec_info()[0] 
